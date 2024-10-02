@@ -1,4 +1,5 @@
 import sys
+from tkinter_window_framework import wnhandler
 from types import MethodType
 # We won't hold anything tkinter related in this file. wnhandler will handle the tkinter part
 
@@ -59,19 +60,30 @@ def createbutton(name, width, height, dx, dy, ttype, parent, parentcanvas, funct
     x2 = width + dx
     y1 = 0 + dy
     y2 = height + dy
+    current_window = 0
+    previous_window = 0
     color = "grey"
-    newbutton = button(name, x1, y1, x2, y2, ttype, parent, parentcanvas)
+    newbutton = button(name, x1, y1, x2, y2, color, parent, parentcanvas)
     for i in functionlist:
         if function == i.__name__:
             print("MATCH")
             newbutton.function = MethodType(i, newbutton)
+            parent.buttonlist.append(newbutton)
+            return newbutton
+    # if no match found, function will be treated as a target window
+    # appendable = changewindow(function,parentcanvas,current_window,previous_window)
+    newbutton.function = MethodType(lambda x: wnhandler.drawwindow(function, parentcanvas, current_window, previous_window),newbutton)
     parent.buttonlist.append(newbutton)
     return newbutton
+    
     
 def exit(event):
     print("whatever")
     sys.exit()
-
+    
+def changewindow(function,parentcanvas,current_window,previous_window):
+    wnhandler.drawwindow(function,parentcanvas,current_window,previous_window)
+    
 functionlist = [exit]
 print("functionlist", functionlist)
 print("functionlist0", functionlist[0])
